@@ -1,0 +1,11 @@
+
+# Object Files and Directory
+obj
+*.o
+
+# Build Directory
+build
+
+# Log and Environment Files
+*.log
+.env
