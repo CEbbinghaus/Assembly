@@ -1,3 +1,9 @@
+param (
+	[Parameter()]
+	[switch]
+	$Run = $false
+)
+
 $SourceDir = "src"
 $BuildDir = "build"
 $ObjDir = "obj"
@@ -78,3 +84,8 @@ gcc -e main $ObjectFiles -o "$BuildDir/$ProjectName.exe"
 CheckTaskStatus("Link")
 
 Write-Output "Finished Building Assembly"
+
+if($Run){
+	Write-Output "Running Final Executable:`n------------------------------------------------------"
+	Start-Process  -NoNewWindow -FilePath "./$BuildDir/$ProjectName.exe"
+}
