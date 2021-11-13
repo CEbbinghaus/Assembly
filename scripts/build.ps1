@@ -87,7 +87,7 @@ Write-Output "Finished Building Assembly"
 if ($Run) {
 	Write-Output "Running Final Executable:`n------------------------------------------------------"
 	$Process = Start-Process  -NoNewWindow -Wait -FilePath "./$BuildDir/$ProjectName.exe"
-	# $Process = Start-Process  -NoNewWindow -Wait -PassThru -FilePath node ./test.js
+	# $Process = Start-Process  -NoNewWindow -Wait -PassThru -FilePath subst "fail"
 	$Process.HasExited
 
 	Write-Output "Process Exited with $($Process.ExitCode)"
