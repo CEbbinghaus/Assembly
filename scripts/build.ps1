@@ -11,27 +11,27 @@ $ProjectName = "HelloWorld"
 
 function CheckTaskStatus {
 	param (
-        [string]$Task
-    )
+		[string]$Task
+	)
 	if ($?) {
-		Write-Output "✔️  $($Task)ed Successfully";
+		Write-Output "✔️  $($Task) Succeeded";
 	}
 	else {
-		Write-Output "❌  $($Task)ing Failed";
+		Write-Output "❌  $($Task) Failed";
 		exit 1;
 	}
 }
 function CleanFiles {
 	param (
-        [string[]]$Files
-    )
-	foreach($File in $Files){
+		[string[]]$Files
+	)
+	foreach ($File in $Files) {
 		if ((test-path $File)) {
 			Remove-Item -Path $File
 		}
 	}
 }
-function LoadFiles{
+function LoadFiles {
 	param (
 		[string]$BasePath,
 		[string]$Pattern
@@ -60,7 +60,7 @@ CleanFiles($ObjectFiles)
 Write-Output "Compiling Source files"
 
 $count = 0;
-foreach($File in $SourceFiles){
+foreach ($File in $SourceFiles) {
 	++$count;
 	$FileName = $File.Name;
 	$FilePath = $File.Path;
@@ -70,8 +70,8 @@ foreach($File in $SourceFiles){
 	}
 
 	nasm -fwin64 -o "$ObjDir/$FileName.o" $FilePath
-	Write-Progress -Activity 'Compiling' -Status "Compiling $FileName" -PercentComplete (($count / ($SourceFiles).Count) * 100)
-	CheckTaskStatus("Compil")
+	CheckTaskStatus "Compiling $FileName"
+	# Write-Progress -Activity 'Compiling' -Status "Compiling $FileName" -PercentComplete (($count / ($SourceFiles).Count) * 100)
 }
 
 $ObjectFiles = (LoadFiles $ObjDir "*.o").Path;
@@ -81,11 +81,14 @@ If (!(test-path $BuildDir)) {
 	New-Item -ItemType Directory -Force -Path $BuildDir
 }
 gcc -e main $ObjectFiles -o "$BuildDir/$ProjectName.exe"
-CheckTaskStatus("Link")
-
+CheckTaskStatus "Linking"
 Write-Output "Finished Building Assembly"
 
-if($Run){
+if ($Run) {
 	Write-Output "Running Final Executable:`n------------------------------------------------------"
-	Start-Process  -NoNewWindow -FilePath "./$BuildDir/$ProjectName.exe"
+	$Process = Start-Process  -NoNewWindow -Wait -FilePath "./$BuildDir/$ProjectName.exe"
+	# $Process = Start-Process  -NoNewWindow -Wait -PassThru -FilePath node ./test.js
+	$Process.HasExited
+
+	Write-Output "Process Exited with $($Process.ExitCode)"
 }
